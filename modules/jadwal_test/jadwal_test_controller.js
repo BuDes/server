@@ -2,6 +2,7 @@ const log = require("../../utils/log")
 const RiwayatModel = require("../riwayat/riwayat_model")
 const UserModel = require("../user/user_model")
 const JadwalTestModel = require("./jadwal_test_model")
+const JadwalTestService = require("./jadwal_test_service")
 
 class JadwalTestController{
   static async allJadwalTest(req, res) {
@@ -128,6 +129,25 @@ class JadwalTestController{
         }
   }
 
+  static async sortedJadwal(req, res) {
+    try {
+      const upcoming = await JadwalTestService.getUpcomingTest()
+      const pastTest = await JadwalTestService.getPastTest()
+      const jadwal = [...upcoming, ...pastTest]
+      return res.status(200).json({
+        status: true,
+        message: "Berhasil mengambil data jadwal",
+        data: jadwal,
+      })
+    } catch (error) {
+      log.error(error.message)
+      return res.status(500).json({
+        status: false,
+        message: "Terjadi kesalahan, silahkan coba lagi",
+        data: null,
+      })
+    }
+  }
 }
 
 module.exports = JadwalTestController
