@@ -30,6 +30,13 @@ class JadwalTestService {
     delete jadwal.peserta
     return { ...jadwal, status, jlhPeserta }
   }
+
+  static parseStatus(jadwal) {
+    const now = new Date()
+    const tanggal = new Date(jadwal.tanggal)
+    const status = tanggal >= now ? "Terjadwal" : "Selesai"
+    return { ...jadwal.get(), status }
+  }
 }
 
 module.exports = JadwalTestService

@@ -7,6 +7,7 @@ router.get("/", authentication, JadwalTestController.jadwalByUser)
 // TODO: auth admin
 router.get("/all", JadwalTestController.allJadwalTest)
 router.get("/all_sorted", JadwalTestController.sortedJadwal)
+router.get("/details/:id", JadwalTestController.detailJadwal)
 router.post("/add", JadwalTestController.addJadwalTest)
 router.put("/edit/:id", JadwalTestController.updateJadwalTest)
 router.delete("/remove/:id", JadwalTestController.removeJadwalTest)

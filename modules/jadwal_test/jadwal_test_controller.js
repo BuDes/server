@@ -148,6 +148,31 @@ class JadwalTestController{
       })
     }
   }
+
+  static async detailJadwal(req, res) {
+    try {
+      const { id } = req.params
+      let jadwal = await JadwalTestModel.findByPk(id, {
+        include: [{
+          association: "peserta",
+          include: ["user"]
+        }]
+      })
+      jadwal = JadwalTestService.parseStatus(jadwal)
+      return res.status(200).json({
+        status: true,
+        message: "Berhasil mengambil detail jadwal test",
+        data: jadwal,
+      })
+    } catch (error) {
+      log.error(error.message)
+      return res.status(500).json({
+        status: false,
+        message: "Terjadi kesalahan, silahkan coba lagi",
+        data: null,
+      })
+    }
+  }
 }
 
 module.exports = JadwalTestController
