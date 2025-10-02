@@ -4,13 +4,14 @@ const fs = require('fs')
 const path = require('path')
 const SoalModel = require("./soal_model")
 const JadwalTestModel = require("../jadwal_test/jadwal_test_model")
-const OpsiModel = require("../opsi/opsi_model")
+const OpsiModel = require("./opsi_model")
 
 class SoalController {
   static async allSoal(req, res) {
       try {
       const soal = await SoalModel.findAll({
-        include: ["jadwal_test", {model: OpsiModel, as: "jawaban_benar"}],
+        include: ["jadwal_test", {model: OpsiModel, as: "jawaban_benar", attributes: ["id", "isi"]},
+         {model: OpsiModel, as: "opsi", attributes: ["id", "isi"]}],
       })
       return res.status(200).json({
           status: true,
@@ -32,9 +33,9 @@ class SoalController {
       const { tipe } = req.params;
       const soal = await SoalModel.findAll({
         where: { tipe },
-         include: ["jadwal_test", {model: OpsiModel, as: "jawaban_benar"}],
-      });
-
+         include: ["jadwal_test", {model: OpsiModel, as: "jawaban_benar", attributes: ["id", "isi"]},
+         {model: OpsiModel, as: "opsi", attributes: ["id", "isi"]}],
+      })
       return res.status(200).json({
         status: true,
         message: `Berhasil mengambil semua soal dengan tipe ${tipe}`,
@@ -203,7 +204,6 @@ static async addManySoal(req, res) {
         opsiSaved = await OpsiModel.bulkCreate(opsiData, { returning: true })
       }
 
-      // === Set jawaban benar ===
       if (s.jawabanIndex !== undefined && opsiSaved[s.jawabanIndex]) {
         soal.idOpsiBenar = opsiSaved[s.jawabanIndex].id
         await soal.save()

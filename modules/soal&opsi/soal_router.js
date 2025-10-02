@@ -4,7 +4,8 @@ const router = express.Router();
 
 // TODO: auth admin
 router.get("/", SoalController.allSoal)
-router.get("/:tipe", SoalController.allSoalTipe)
+router.get("/tipe/:tipe", SoalController.allSoalTipe)
+router.get("/:id", SoalController.soalByidJadwal)
 router.post("/add", SoalController.addSoal)
 router.post("/add_many", SoalController.addManySoal)
 router.put("/edit/:id", SoalController.updateSoal)
