@@ -1,23 +1,23 @@
-const { STRING, UUIDV4, ENUM } = require("sequelize")
+const { STRING, UUIDV4 } = require("sequelize")
 const sequelize = require("../../config/database")
 
-const JenisMateriModel = sequelize.define("jenis_materi", {
+const JawabanModel = sequelize.define("jawaban", {
   id: {
     type: STRING,
     defaultValue: UUIDV4,
     allowNull: false,
     primaryKey: true,
   },
-  nama: {
+  idUser:{
     type: STRING,
     allowNull: false,
   },
-  gambar: {
+  idOpsi:{
     type: STRING,
-    allowNull: true,
+    allowNull: false,
   },
 }, {
   freezeTableName: true,
 })
 
-module.exports = JenisMateriModel
+module.exports = JawabanModel
