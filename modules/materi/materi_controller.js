@@ -185,6 +185,32 @@ const JenisMateriModel = require("../jenis_materi/jenis_materi_model");
     }
   }
 
+  static async materiAndJenis(req, res) {
+    try {
+      const jenis = await JenisMateriModel.findAll()
+      let materi = await MateriModel.findAll({
+        include: ["jenis_materi"]
+      })
+      materi = materi.map((item) => {
+        item = item.get()
+        const jenis = item.jenis_materi
+        delete item.jenis_materi
+        return { ...item, jenis }
+      })
+      return res.status(200).json({
+        status: true,
+        message: "Berhasil mengambil data materi dan jenis materi",
+        data: { jenis, materi },
+      });
+    } catch (error) {
+      log.error(error.message);
+      return res.status(500).json({
+        status: false,
+        message: "Terjadi kesalahan, silakan coba lagi",
+        data: null,
+      });
+    }
+  }
 }
 
 module.exports = MateriController

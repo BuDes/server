@@ -1,4 +1,4 @@
-const { STRING, UUIDV4 } = require("sequelize")
+const { STRING, UUIDV4, ENUM } = require("sequelize")
 const sequelize = require("../../config/database")
 const bcrypt = require("bcrypt")
 const saltRounds = parseInt(process.env.SALTROUNDS)
@@ -17,6 +17,11 @@ const UserModel = sequelize.define("user", {
   email: {
     type: STRING,
     allowNull: false,
+  },
+  role: {
+    type: ENUM("user", "pakar"),
+    allowNull: false,
+    defaultValue: "user"
   },
   password: {
     type: STRING,

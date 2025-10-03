@@ -16,6 +16,10 @@ const JenisMateriModel = sequelize.define("jenis_materi", {
     type: STRING,
     allowNull: true,
   },
+  deskripsi: {
+    type: STRING,
+    allowNull: false,
+  },
 }, {
   freezeTableName: true,
 })
