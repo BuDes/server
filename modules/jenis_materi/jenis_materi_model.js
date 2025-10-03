@@ -14,7 +14,7 @@ const JenisMateriModel = sequelize.define("jenis_materi", {
   },
   gambar: {
     type: STRING,
-    allowNull: true,
+    allowNull: false,
   },
   deskripsi: {
     type: STRING,

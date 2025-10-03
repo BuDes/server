@@ -4,11 +4,15 @@ const JenisMateri = require("./jenis_materi_model")
 const fs = require('fs')
 const path = require('path')
 const { Op } = require("sequelize");
+const JenisMateriService = require("./jenis_materi_service")
 
 class JenisMateriController {
   static async allJenisMateri(req, res) {
     try {
-      const jenis = await JenisMateri.findAll()
+      const url = getUrl(req)
+      let jenis = await JenisMateri.findAll()
+      jenis = jenis.map((e) => e.get())
+      jenis = JenisMateriService.parseImage(jenis, url)
       return res.status(200).json({
         status: true,
         message: "Berhasil mengambil data jenis materi",
@@ -39,9 +43,7 @@ class JenisMateriController {
       const file = req.files.file
       const fileSize = file.data.length
       const ext = path.extname(file.name)
-      const fileName = file.md5 + ext
-      const url = getUrl(req)
-      const gambar = `${url}/public/gambar/${fileName}`
+      const fileName = Date.now() + "-" + file.md5 + ext
       const allowedType = ['.png', '.jpg', '.jpeg', '.gif', '.webp']
       if (!allowedType.includes(ext.toLowerCase())) return res.status(422).json({ msg: "Invalid Image" })
       if (fileSize > 5000000) return res.status(422).json({ msg: "Image must be less than 5 MB" })
@@ -50,7 +52,7 @@ class JenisMateriController {
         try {
             const jenisData = {
                 ...data,
-                gambar: gambar
+                gambar: fileName
             }
             const jenis = await JenisMateri.create(jenisData)
             return res.status(201).json({
@@ -105,16 +107,11 @@ class JenisMateriController {
       }
     }
 
-      let fileName = "";
-      if (req.files === null || !req.files.file) {
-        fileName = jenis.gambar ? jenis.gambar.split("/").pop() : "";
-      } else {
+      if (req.files !== null && req.files.file) {
         const file = req.files.file;
         const fileSize = file.data.length;
         const ext = path.extname(file.name);
-        const fileName = file.md5 + ext;
-        const url = getUrl(req)
-        const gambar = `${url}/public/gambar/${fileName}`;
+        const fileName = Date.now() + "-" + file.md5 + ext
         const allowedType = [".png", ".jpg", ".jpeg", ".gif", ".webp"];
 
         if (!allowedType.includes(ext.toLowerCase())) {
@@ -132,7 +129,7 @@ class JenisMateriController {
         await file.mv(`./public/gambar/${fileName}`);
 
         if (fileName) {
-        data.gambar = gambar;
+        data.gambar = fileName;
         }
       }
       await jenis.update(data);
