@@ -4,6 +4,9 @@ const JenisMateriModel = require("../jenis_materi/jenis_materi_model")
 const RiwayatModel = require('../riwayat/riwayat_model')
 const JadwalTestModel = require('../jadwal_test/jadwal_test_model')
 const PesertaModel = require('../peserta/peserta_model')
+const SoalModel = require('../soal&opsi/soal_model')
+const OpsiModel = require('../soal&opsi/opsi_model')
+const JawabanModel = require('../jawaban/jawaban_model')
 
 function defineAssociations() {
   MateriModel.belongsTo(JenisMateriModel, { 
@@ -51,6 +54,52 @@ function defineAssociations() {
     as: "peserta"
   })
   
+  
+  SoalModel.belongsTo(JadwalTestModel, {
+    foreignKey: "idJadwalTest",
+    as: "jadwal_test"
+  })
+  JadwalTestModel.hasMany(SoalModel, {
+    foreignKey: "idJadwalTest",
+    as: "soal"
+  })
+
+  SoalModel.belongsTo(JenisMateriModel, {
+    foreignKey: "idJenisMateri",
+    as: "jenis_materi"
+  })
+  JenisMateriModel.hasMany(SoalModel, {
+    foreignKey: "idJenisMateri",
+    as: "soal"
+  })
+
+  SoalModel.hasMany(OpsiModel, {
+  foreignKey: "idSoal",
+  as: "opsi",
+  onDelete: "CASCADE"
+  })
+  OpsiModel.belongsTo(SoalModel, {
+  foreignKey: "idSoal",
+  as: "soal",
+  onDelete: "CASCADE"
+  })
+  SoalModel.belongsTo(OpsiModel, {
+  foreignKey: "idOpsiBenar",
+  as: "jawaban_benar",
+  })
+
+  UserModel.hasMany(JawabanModel, {
+    foreignKey: "idUser",
+    as: "jawaban"
+  })
+  JawabanModel.belongsTo(UserModel, {
+    foreignKey: "idUser",
+    as: "user"
+  })
+  JawabanModel.belongsTo(OpsiModel, {
+    foreignKey: "idOpsi",
+    as: "opsi"
+  })
 }
 
 module.exports = { defineAssociations }

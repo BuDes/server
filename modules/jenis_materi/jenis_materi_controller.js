@@ -11,7 +11,7 @@ class JenisMateriController {
       const jenis = await JenisMateri.findAll()
       return res.status(200).json({
         status: true,
-        message: "Berhasil mengambil data Produk",
+        message: "Berhasil mengambil data jenis materi",
         data: jenis,
       })
     } catch (error) {

@@ -20,6 +20,10 @@ const MateriModel = sequelize.define("materi", {
     type: TEXT,
     allowNull: true,
   },
+  opsi: {
+    type: TEXT,
+    allowNull: true,
+  },
 }, {
   freezeTableName: true,
 })
