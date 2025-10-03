@@ -8,10 +8,6 @@ const SoalModel = sequelize.define("soal", {
     allowNull: false,
     primaryKey: true,
   },
-  idJadwalTest:{
-    type: STRING,
-    allowNull: false,
-  },
   idJenisMateri:{
     type: STRING,
     allowNull: false,

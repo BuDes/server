@@ -28,7 +28,6 @@ function defineAssociations() {
     foreignKey: "idUser",
     as: "riwayat"
   })
-
   RiwayatModel.belongsTo(JadwalTestModel, {
     foreignKey: "idJadwalTest",
     as: "jadwal_test"
@@ -37,6 +36,15 @@ function defineAssociations() {
     foreignKey: "idJadwalTest",
     as: "riwayat"
   })
+  RiwayatModel.belongsTo(MateriModel, {
+    foreignKey: "idMateri",
+    as: "materi"
+  })
+  MateriModel.hasMany(RiwayatModel,{
+    foreignKey: "idMateri",
+    as: "riwayat"
+  })
+
   PesertaModel.belongsTo(UserModel, {
     foreignKey: "idUser",
     as: "user"
@@ -52,16 +60,6 @@ function defineAssociations() {
   JadwalTestModel.hasMany(PesertaModel, {
     foreignKey: "idJadwalTest",
     as: "peserta"
-  })
-  
-  
-  SoalModel.belongsTo(JadwalTestModel, {
-    foreignKey: "idJadwalTest",
-    as: "jadwal_test"
-  })
-  JadwalTestModel.hasMany(SoalModel, {
-    foreignKey: "idJadwalTest",
-    as: "soal"
   })
 
   SoalModel.belongsTo(JenisMateriModel, {
@@ -99,6 +97,15 @@ function defineAssociations() {
   JawabanModel.belongsTo(OpsiModel, {
     foreignKey: "idOpsi",
     as: "opsi"
+  })
+
+  JawabanModel.belongsTo(RiwayatModel, {
+    foreignKey: "idRiwayat",
+    as: "riwayat"
+  })
+  RiwayatModel.hasMany(JawabanModel, {
+    foreignKey: "idRiwayat",
+    as: "jawaban"
   })
 }
 

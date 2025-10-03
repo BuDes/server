@@ -8,6 +8,10 @@ const JadwalTestModel = sequelize.define("jadwal_test", {
     allowNull: false,
     primaryKey: true,
   },
+  nama: {
+    type: STRING,
+    allowNull: false,
+  },
   tanggal: {
     type: DATE,
     allowNull: false,

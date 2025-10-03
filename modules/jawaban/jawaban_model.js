@@ -16,6 +16,10 @@ const JawabanModel = sequelize.define("jawaban", {
     type: STRING,
     allowNull: false,
   },
+  idRiwayat:{
+    type: STRING,
+    allowNull: false,
+  },
 }, {
   freezeTableName: true,
 })

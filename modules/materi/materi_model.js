@@ -12,15 +12,15 @@ const MateriModel = sequelize.define("materi", {
     type: STRING,
     allowNull: false,
   },
+  nama: {
+    type: STRING,
+    allowNull: false,
+  },
   videoFile: {
     type: STRING,
     allowNull: true,
   },
   content: {
-    type: TEXT,
-    allowNull: true,
-  },
-  opsi: {
     type: TEXT,
     allowNull: true,
   },
