@@ -5,6 +5,7 @@ const fs = require('fs')
 const path = require('path')
 const { Op } = require("sequelize");
 const JenisMateriService = require("./jenis_materi_service")
+const JenisMateriModel = require("./jenis_materi_model")
 
 class JenisMateriController {
   static async allJenisMateri(req, res) {
@@ -182,6 +183,24 @@ class JenisMateriController {
     }
   }
 
+  static async singleJenis(req, res) {
+    try {
+      const { id } = req.params
+      const jenis = await JenisMateriModel.findByPk(id)
+      return res.status(200).json({
+        status: true,
+        message: "Berhasil mengambil detail jenis",
+        data: jenis,
+      });
+    } catch (error) {
+      log.error(error.message);
+      return res.status(500).json({
+        status: false,
+        message: "Terjadi kesalahan, silakan coba lagi",
+        data: null,
+      });
+    }
+  }
 }
 
 module.exports = JenisMateriController

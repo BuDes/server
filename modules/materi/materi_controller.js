@@ -4,6 +4,7 @@ const fs = require('fs')
 const path = require('path')
 const MateriModel = require("./materi_model")
 const JenisMateriModel = require("../jenis_materi/jenis_materi_model");
+const MateriService = require("./materi_service")
 
 class MateriController{
   static async allMateri(req, res) {
@@ -54,9 +55,7 @@ class MateriController{
     const file = req.files.file
     const fileSize = file.data.length
     const ext = path.extname(file.name)
-    const fileName = file.md5 + ext
-    const url = getUrl(req)
-    const videoFile = `${url}/public/videoFile/${fileName}`
+    const fileName = Date.now() + "-" + file.md5 + ext
     const allowedType = ['.mp4', '.mkv', '.avi', '.mov', '.webm']
     if (!allowedType.includes(ext.toLowerCase())) return res.status(422).json({ msg: "Invalid Image" })
     if (fileSize > 100 * 1024 * 1024) return res.status(422).json({ msg: "Video must be less than 100 MB" })
@@ -65,7 +64,7 @@ class MateriController{
       try {
           const jenisData = {
               ...data,
-              videoFile: videoFile
+              videoFile: fileName
           }
           const materi = await MateriModel.create(jenisData)
           return res.status(201).json({
@@ -107,16 +106,11 @@ static async updateMateri(req, res) {
       });
     }
 
-    let fileName = "";
-    if (req.files === null || !req.files.file) {
-      fileName = materi.videoFile ? materi.videoFile.split("/").pop() : "";
-    } else {
+    if (req.files !== null || req.files.file) {
       const file = req.files.file;
       const fileSize = file.data.length;
       const ext = path.extname(file.name);
-      const fileName = file.md5 + ext;
-      const url = getUrl(req)
-      const videoFile = `${url}/public/videoFile/${fileName}`;
+      const fileName = Date.now() + "-" + file.md5 + ext
       const allowedType = ['.mp4', '.mkv', '.avi', '.mov', '.webm']
 
       if (!allowedType.includes(ext.toLowerCase())) {
@@ -131,7 +125,7 @@ static async updateMateri(req, res) {
       await file.mv(`./public/videoFile/${fileName}`);
 
       if (fileName) {
-      data.videoFile = videoFile;
+      data.videoFile = fileName;
       }
     }
     await materi.update(data);
@@ -186,20 +180,41 @@ static async removeMateri(req, res) {
 
   static async materiAndJenis(req, res) {
     try {
-      const jenis = await JenisMateriModel.findAll()
+      const url = getUrl(req)
+      let jenis = await JenisMateriModel.findAll()
+      jenis = jenis.map((e) => e.get())
+      jenis = MateriService.parseJenisImage(jenis, url)
+      
       let materi = await MateriModel.findAll({
         include: ["jenis_materi"]
       })
-      materi = materi.map((item) => {
-        item = item.get()
-        const jenis = item.jenis_materi
-        delete item.jenis_materi
-        return { ...item, jenis }
-      })
+      materi = materi.map((e) => e.get())
+      materi = MateriService.parseMateri(materi, url)
       return res.status(200).json({
         status: true,
         message: "Berhasil mengambil data materi dan jenis materi",
         data: { jenis, materi },
+      });
+    } catch (error) {
+      log.error(error.message);
+      return res.status(500).json({
+        status: false,
+        message: "Terjadi kesalahan, silakan coba lagi",
+        data: null,
+      });
+    }
+  }
+
+  static async singleMateri(req, res) {
+    try {
+      const { id } = req.params
+      const url = getUrl(req)
+      let materi = await MateriModel.findByPk(id)
+      materi = MateriService.parseMateri([materi], url)
+      return res.status(200).json({
+        status: true,
+        message: "Berhasil mengambil data detail materi",
+        data: materi,
       });
     } catch (error) {
       log.error(error.message);
