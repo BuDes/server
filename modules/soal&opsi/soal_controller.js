@@ -5,6 +5,7 @@ const path = require('path')
 const SoalModel = require("./soal_model")
 const JadwalTestModel = require("../jadwal_test/jadwal_test_model")
 const OpsiModel = require("./opsi_model")
+const JenisMateriModel = require("../jenis_materi/jenis_materi_model")
 
 class SoalController {
   static async allSoal(req, res) {
@@ -12,6 +13,7 @@ class SoalController {
       const soal = await SoalModel.findAll({
         include: ["jadwal_test", {model: OpsiModel, as: "jawaban_benar", attributes: ["id", "isi"]},
          {model: OpsiModel, as: "opsi", attributes: ["id", "isi"]}],
+        order: [["tipe", "ASC"], ["createdAt", "DESC"]]
       })
       return res.status(200).json({
           status: true,
@@ -76,7 +78,7 @@ class SoalController {
   static async addSoal(req, res) {
   try {
     const data = req.body
-    if (req.files === null) return res.status(400).json({ msg: "No File Uploaded" })
+    if (req.files === null) return res.status(400).json({ message: "No File Uploaded" })
     const file = req.files.file
     const fileSize = file.data.length
     const ext = path.extname(file.name)
@@ -84,10 +86,10 @@ class SoalController {
     const url = getUrl(req)
     const audioFile = `${url}/public/audioFile/${fileName}`
     const allowedType = ['.aac', '.mp3', '.wav']
-    if (!allowedType.includes(ext.toLowerCase())) return res.status(422).json({ msg: "Invalid File" })
-    if (fileSize > 100 * 1024 * 1024) return res.status(422).json({ msg: "File must be less than 100 MB" })
+    if (!allowedType.includes(ext.toLowerCase())) return res.status(422).json({ message: "Invalid File" })
+    if (fileSize > 100 * 1024 * 1024) return res.status(422).json({ message: "File must be less than 100 MB" })
     file.mv(`./public/audioFile/${fileName}`, async (err) => {
-      if (err) return res.status(500).json({ msg: err.message })
+      if (err) return res.status(500).json({ message: err.message })
       try {
           const jenisData = {
               ...data,
@@ -136,97 +138,155 @@ class SoalController {
     }
 }
 
-static async addManySoal(req, res) {
+// static async addManySoal(req, res) {
+//   try {
+//     const soalArray = []
+
+//     for (const [key, value] of Object.entries(req.body)) {
+//       const match = key.match(/^soal\[(\d+)\]\[(.+)\]$/)
+//       if (match) {
+//         const index = parseInt(match[1], 10)
+//         const field = match[2]
+//         if (!soalArray[index]) soalArray[index] = {}
+//         soalArray[index][field] = value
+//       }
+//     }
+
+//     if (!soalArray.length) {
+//       return res.status(400).json({ msg: "Soal tidak ditemukan dalam request" })
+//     }
+
+//     let hasilSoal = []
+
+//     for (let i = 0; i < soalArray.length; i++) {
+//       const s = soalArray[i]
+
+//       let audioFile = null
+//       if (req.files && req.files[`soal[${i}][file]`]) {
+//         const file = req.files[`soal[${i}][file]`]
+//         const fileSize = file.data.length
+//         const ext = path.extname(file.name)
+//         const fileName = file.md5 + ext
+//         const url = getUrl(req)
+//         audioFile = `${url}/public/audioFile/${fileName}`
+
+//         const allowedType = [".aac", ".mp3", ".wav"]
+//         if (!allowedType.includes(ext.toLowerCase())) {
+//           return res.status(422).json({ msg: `File soal[${i}] invalid` })
+//         }
+//         if (fileSize > 100 * 1024 * 1024) {
+//           return res.status(422).json({ msg: `File soal[${i}] lebih dari 100MB` })
+//         }
+
+//         await new Promise((resolve, reject) => {
+//           file.mv(`./public/audioFile/${fileName}`, (err) => {
+//             if (err) reject(err)
+//             else resolve()
+//           })
+//         })
+//       }
+
+//       const soal = await SoalModel.create({
+//         idJadwalTest: s.idJadwalTest,
+//         idJenisMateri: s.idJenisMateri,
+//         pertanyaan: s.pertanyaan,
+//         tipe: s.tipe,
+//         audioFile
+//       })
+
+//       const opsiKeys = Object.keys(s).filter(k => k.startsWith("opsi["))
+//       const opsi = opsiKeys.map(k => s[k])
+
+//       let opsiSaved = []
+//       if (opsi.length > 0) {
+//         const opsiData = opsi.map((isi) => ({
+//           idSoal: soal.id,
+//           isi
+//         }))
+//         opsiSaved = await OpsiModel.bulkCreate(opsiData, { returning: true })
+//       }
+
+//       if (s.jawabanIndex !== undefined && opsiSaved[s.jawabanIndex]) {
+//         soal.idOpsiBenar = opsiSaved[s.jawabanIndex].id
+//         await soal.save()
+//       }
+
+//       hasilSoal.push({
+//         soal,
+//         opsi: opsiSaved
+//       })
+//     }
+
+//     return res.status(201).json({
+//       status: true,
+//       message: "Berhasil menambahkan banyak soal",
+//       data: hasilSoal
+//     })
+
+//   } catch (error) {
+//     console.error(error.message)
+//     return res.status(500).json({
+//       status: false,
+//       message: "Terjadi kesalahan saat menyimpan data",
+//       data: null
+//     })
+//   }
+// }
+
+static async addMany(req, res) {
   try {
-    const soalArray = []
+    // the JSON array (as string) from form-data field named "data"
+    const soalArray = JSON.parse(req.body.data);
 
-    for (const [key, value] of Object.entries(req.body)) {
-      const match = key.match(/^soal\[(\d+)\]\[(.+)\]$/)
-      if (match) {
-        const index = parseInt(match[1], 10)
-        const field = match[2]
-        if (!soalArray[index]) soalArray[index] = {}
-        soalArray[index][field] = value
-      }
-    }
+    // const savedSoals = [];
+    for (const item of soalArray) {
+      let audioFileName = null;
 
-    if (!soalArray.length) {
-      return res.status(400).json({ msg: "Soal tidak ditemukan dalam request" })
-    }
+      // handle optional audio file (field name should match item.id or something unique)
+      if (req.files && item.audioFile && req.files[item.audioFile]) {
+        const audio = req.files[item.audioFile];
+        const uploadDir = path.join("public", "audioFile");
+        if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
-    let hasilSoal = []
-
-    for (let i = 0; i < soalArray.length; i++) {
-      const s = soalArray[i]
-
-      let audioFile = null
-      if (req.files && req.files[`soal[${i}][file]`]) {
-        const file = req.files[`soal[${i}][file]`]
-        const fileSize = file.data.length
-        const ext = path.extname(file.name)
-        const fileName = file.md5 + ext
-        const url = getUrl(req)
-        audioFile = `${url}/public/audioFile/${fileName}`
-
-        const allowedType = [".aac", ".mp3", ".wav"]
-        if (!allowedType.includes(ext.toLowerCase())) {
-          return res.status(422).json({ msg: `File soal[${i}] invalid` })
-        }
-        if (fileSize > 100 * 1024 * 1024) {
-          return res.status(422).json({ msg: `File soal[${i}] lebih dari 100MB` })
-        }
-
-        await new Promise((resolve, reject) => {
-          file.mv(`./public/audioFile/${fileName}`, (err) => {
-            if (err) reject(err)
-            else resolve()
-          })
-        })
+        audioFileName = `${Date.now()}-${audio.name}`;
+        item.audioFile = audioFileName
+        const uploadPath = path.join(uploadDir, audioFileName);
+        await audio.mv(uploadPath);
       }
 
-      const soal = await SoalModel.create({
-        idJadwalTest: s.idJadwalTest,
-        idJenisMateri: s.idJenisMateri,
-        pertanyaan: s.pertanyaan,
-        tipe: s.tipe,
-        audioFile
-      })
+      // create soal
+      const { idOpsiBenar } = item
+      delete item.idOpsiBenar
+      const soal = await SoalModel.create(item, {
+        include: ["opsi"]
+      });
+      await soal.update({ idOpsiBenar })
 
-      const opsiKeys = Object.keys(s).filter(k => k.startsWith("opsi["))
-      const opsi = opsiKeys.map(k => s[k])
+      // create opsi
+      // const opsiData = item.opsi.map((o) => ({
+      //   id: o.id,
+      //   idSoal: soal.id,
+      //   isi: o.isi,
+      // }));
+      // await OpsiModel.bulkCreate(opsiData);
 
-      let opsiSaved = []
-      if (opsi.length > 0) {
-        const opsiData = opsi.map((isi) => ({
-          idSoal: soal.id,
-          isi
-        }))
-        opsiSaved = await OpsiModel.bulkCreate(opsiData, { returning: true })
-      }
-
-      if (s.jawabanIndex !== undefined && opsiSaved[s.jawabanIndex]) {
-        soal.idOpsiBenar = opsiSaved[s.jawabanIndex].id
-        await soal.save()
-      }
-
-      hasilSoal.push({
-        soal,
-        opsi: opsiSaved
-      })
+      // savedSoals.push({
+      //   soal,
+      //   opsi: opsiData,
+      // });
     }
 
     return res.status(201).json({
       status: true,
-      message: "Berhasil menambahkan banyak soal",
-      data: hasilSoal
-    })
-
+      message: "Soal dan opsi berhasil disimpan",
+      data: [],
+    });
   } catch (error) {
-    console.error(error.message)
+    log.error(error)
     return res.status(500).json({
       status: false,
-      message: "Terjadi kesalahan saat menyimpan data",
-      data: null
+      message: "Terjadi kesalahan, silahkan coba lagi",
+      data: null,
     })
   }
 }
@@ -258,9 +318,9 @@ static async updateSoal(req, res) {
       const allowedType = ['.aac', '.mp3', '.wav'];
 
       if (!allowedType.includes(ext.toLowerCase())) {
-        return res.status(422).json({ msg: "Invalid file" });
+        return res.status(422).json({ message: "Invalid file" });
       }
-        if (fileSize > 100 * 1024 * 1024) return res.status(422).json({ msg: "Video must be less than 100 MB" })
+        if (fileSize > 100 * 1024 * 1024) return res.status(422).json({ message: "Audio must be less than 100 MB" })
       if (soal.audioFile) {
       const oldFile = `./public/audioFile/${soal.audioFile.split("/").pop()}`;
       if (fs.existsSync(oldFile)) fs.unlinkSync(oldFile);
@@ -340,6 +400,49 @@ static async removeSoal(req, res) {
     }
   }
 
+  static async soalByJenis(req, res) {
+    try {
+      const { idJenis: idJenisMateri } = req.params
+      const jenis = await JenisMateriModel.findByPk(idJenisMateri)
+      const soal = await SoalModel.findAll({
+        where: { idJenisMateri },
+        order: [["createdAt", "DESC"]]
+      })
+      return res.status(200).json({
+        status: true,
+        message: "Berhasil mengambil data soal dari jenis",
+        data: { jenis, soal },
+      })
+    } catch (error) {
+      log.error(error.message);
+      return res.status(500).json({
+        status: false,
+        message: "Terjadi kesalahan, silakan coba lagi",
+        data: null,
+      })
+    }
+  }
+
+  static async detailSoal(req, res) {
+    try {
+      const { id } = req.params
+      const soal = await SoalModel.findByPk(id, {
+        include: ["opsi"]
+      })
+      return res.status(200).json({
+        status: true,
+        message: "Berhasil mengambil detail soal",
+        data: soal,
+      })
+    } catch (error) {
+      log.error(error.message);
+      return res.status(500).json({
+        status: false,
+        message: "Terjadi kesalahan, silakan coba lagi",
+        data: null,
+      })
+    }
+  }
 }
 
 module.exports = SoalController
