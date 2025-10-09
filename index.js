@@ -8,6 +8,9 @@ const log = require("./utils/log");
 const getUrl = require("./utils/get_url");
 const { defineAssociations } = require('./modules/associations');
 const FileUpload = require("express-fileupload");
+const http = require('http');
+const { Server } = require('socket.io');
+const socketHandler = require('./websocket/socketHandler');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -26,9 +29,16 @@ app.get('/', (req, res) => {
   res.status(200).json({ message: 'Selamat datang', url });
 });
 
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: { origin: '*' }
+});
+
+socketHandler(io);
+
 db.sync({ alter: true })
   .then(() => {
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       log.debug(`\nServer berjalan di http://localhost:${PORT}\n`);
     });
   })
