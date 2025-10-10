@@ -6,7 +6,16 @@ class MateriService {
     })
   }
 
-  static parseMateri(listMateri, url) {
+  static parseMateriVideo(listMateri, url) {
+    return listMateri.map((materi) => {
+      const videoFile = materi.videoFile
+          ? `${url}/public/videoFile/${materi.videoFile}`
+          : null
+      return { ...materi, videoFile }
+    })
+  }
+
+  static parseJenisMateri(listMateri) {
     return listMateri.map((materi) => {
       const jenis = materi.jenis_materi
       delete materi.jenis_materi

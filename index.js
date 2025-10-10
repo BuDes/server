@@ -11,6 +11,7 @@ const FileUpload = require("express-fileupload");
 const http = require('http');
 const { Server } = require('socket.io');
 const socketHandler = require('./websocket/socketHandler');
+const videoRouter = require("./modules/video_file/video_file_router")
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -21,6 +22,7 @@ app.use(logger)
 app.use(cors());
 app.use(express.json());
 app.use(FileUpload());
+app.use("/public/videoFile", videoRouter)
 app.use("/public", express.static("public"));
 app.use(apiVersion, routes);
 

@@ -16,6 +16,10 @@ const MateriModel = sequelize.define("materi", {
     type: STRING,
     allowNull: false,
   },
+  intro: {
+    type: STRING,
+    allowNull: false,
+  },
   videoFile: {
     type: STRING,
     allowNull: true,

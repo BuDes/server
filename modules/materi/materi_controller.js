@@ -29,10 +29,12 @@ class MateriController{
 
   static async materiByIdJenis(req, res) {
   try {
-      const { id } = req.params
+      const { id: idJenisMateri } = req.params
       
-      const materi = await JenisMateriModel.findByPk(id, {
-      include: ["materi"]})
+      const url = getUrl(req)
+      let materi = await MateriModel.findAll({ where: { idJenisMateri } })
+      materi = materi.map((e) => e.get())
+      materi = MateriService.parseMateriVideo(materi, url)
       return res.status(200).json({
       status: true,
       message: "Berhasil mengambil materi sesuai jenis",
@@ -178,7 +180,7 @@ static async removeMateri(req, res) {
         include: ["jenis_materi"]
       })
       materi = materi.map((e) => e.get())
-      materi = MateriService.parseMateri(materi, url)
+      materi = MateriService.parseJenisMateri(materi)
       return res.status(200).json({
         status: true,
         message: "Berhasil mengambil data materi dan jenis materi",
@@ -197,12 +199,11 @@ static async removeMateri(req, res) {
   static async singleMateri(req, res) {
     try {
       const { id } = req.params
-      const url = getUrl(req)
       const jenis = await JenisMateriModel.findAll()
       let materi = await MateriModel.findByPk(id, {
         include: ["jenis_materi"]
       })
-      materi = MateriService.parseMateri([materi.get()], url)[0]
+      materi = MateriService.parseJenisMateri([materi.get()])[0]
       return res.status(200).json({
         status: true,
         message: "Berhasil mengambil data detail materi",
