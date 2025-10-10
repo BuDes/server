@@ -16,9 +16,10 @@ const SoalModel = sequelize.define("soal", {
     type: STRING,
     allowNull: true,
   },
-  audioFile: {
+  idAttachment: {
     type: STRING,
     allowNull: true,
+    defaultValue: null,
   },
   pertanyaan: {
     type: TEXT,

@@ -1,22 +1,18 @@
 const { STRING, UUIDV4 } = require("sequelize")
 const sequelize = require("../../config/database")
 
-const RiwayatModel = sequelize.define("riwayat", {
+const AttachmentModel = sequelize.define("attachment", {
   id: {
     type: STRING,
     defaultValue: UUIDV4,
     allowNull: false,
     primaryKey: true,
   },
-  idUser: {
-    type: STRING,
-    allowNull: false,
-  },
-  idMateri: {
+  passage: {
     type: STRING,
     allowNull: true,
   },
-  idJadwalTest: {
+  audioFile: {
     type: STRING,
     allowNull: true,
   },
@@ -24,4 +20,4 @@ const RiwayatModel = sequelize.define("riwayat", {
   freezeTableName: true,
 })
 
-module.exports = RiwayatModel
+module.exports = AttachmentModel

@@ -7,6 +7,7 @@ const PesertaModel = require('../peserta/peserta_model')
 const SoalModel = require('../soal&opsi/soal_model')
 const OpsiModel = require('../soal&opsi/opsi_model')
 const JawabanModel = require('../jawaban/jawaban_model')
+const AttachmentModel = require('../attachment/attachment_model')
 
 function defineAssociations() {
   MateriModel.belongsTo(JenisMateriModel, { 
@@ -107,6 +108,16 @@ function defineAssociations() {
     foreignKey: "idRiwayat",
     as: "jawaban"
   })
+  
+  SoalModel.belongsTo(AttachmentModel, {
+    foreignKey: "idAttachment",
+    as: "attachment"
+  })
+  AttachmentModel.hasMany(SoalModel, {
+    foreignKey: "idAttachment",
+    as: "soal"
+  })
+
 }
 
 module.exports = { defineAssociations }
