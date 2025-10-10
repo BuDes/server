@@ -9,6 +9,7 @@ const jadwalTestRouter = require("../modules/jadwal_test/jadwal_test_router")
 const riwayatRouter = require("../modules/riwayat/riwayat_router")
 const soalRouter = require("../modules/soal&opsi/soal_router")
 const jawabanRouter = require("../modules/jawaban/jawaban_router")
+const nilaiRouter = require("../modules/nilai/nilai_router")
 
 router.use("/admin", adminRouter)
 router.use("/user", userRouter)
@@ -18,6 +19,6 @@ router.use("/jadwal_test", jadwalTestRouter)
 router.use("/riwayat", riwayatRouter)
 router.use("/soal", soalRouter)
 router.use("/jawaban", jawabanRouter)
-
+router.use("/nilai", nilaiRouter)
 
 module.exports = router;
