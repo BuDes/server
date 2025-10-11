@@ -16,7 +16,8 @@ class SoalService {
       })
       const ids = randomIds.map((e) => e.id)
       const randomSoal = await SoalModel.findAll({
-        where: { id: ids }
+        where: { id: ids },
+        include: ["opsi"]
       })
       const soal = randomSoal.map((e) => e.get())
 

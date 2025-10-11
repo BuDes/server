@@ -87,14 +87,6 @@ function defineAssociations() {
   as: "jawaban_benar",
   })
 
-  UserModel.hasMany(JawabanModel, {
-    foreignKey: "idUser",
-    as: "jawaban"
-  })
-  JawabanModel.belongsTo(UserModel, {
-    foreignKey: "idUser",
-    as: "user"
-  })
   JawabanModel.belongsTo(OpsiModel, {
     foreignKey: "idOpsi",
     as: "opsi"

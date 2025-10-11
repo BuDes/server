@@ -8,10 +8,6 @@ const JawabanModel = sequelize.define("jawaban", {
     allowNull: false,
     primaryKey: true,
   },
-  idUser:{
-    type: STRING,
-    allowNull: false,
-  },
   idOpsi:{
     type: STRING,
     allowNull: false,
