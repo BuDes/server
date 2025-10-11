@@ -6,6 +6,7 @@ const SoalModel = require("./soal_model")
 const JadwalTestModel = require("../jadwal_test/jadwal_test_model")
 const OpsiModel = require("./opsi_model")
 const JenisMateriModel = require("../jenis_materi/jenis_materi_model")
+const SoalService = require("./soal_service")
 
 class SoalController {
   static async allSoal(req, res) {
@@ -54,25 +55,43 @@ class SoalController {
   }
 
 
-  static async soalByidJadwal(req, res) {
-  try {
-      const { id } = req.params
+  // static async soalByidJadwal(req, res) {
+  // try {
+  //     const { id } = req.params
       
-      const soal = await JadwalTestModel.findByPk(id, {
-      include: ["soal"]})
+  //     const soal = await JadwalTestModel.findByPk(id, {
+  //     include: ["soal"]})
+  //     return res.status(200).json({
+  //     status: true,
+  //     message: "Berhasil mengambil soal sesuai jadwal",
+  //     data: soal,
+  //     })
+  // } catch (error) {
+  //     log.error(error.message)
+  //     return res.status(500).json({
+  //     status: false,
+  //     message: "Terjadi kesalahan, silahkan coba lagi",
+  //     data: null,
+  //     })
+  // }
+  // }
+
+  static async practiceTest(req, res) {
+    try {
+      const randomSoal = await SoalService.getRandomSoal()
       return res.status(200).json({
-      status: true,
-      message: "Berhasil mengambil soal sesuai jadwal",
-      data: soal,
+        status: true,
+        message: "Berhasil mengambil soal",
+        data: randomSoal,
       })
-  } catch (error) {
-      log.error(error.message)
+    } catch (error) {
+      log.error(error)
       return res.status(500).json({
-      status: false,
-      message: "Terjadi kesalahan, silahkan coba lagi",
-      data: null,
+        status: false,
+        message: "Terjadi kesalahan, silahkan coba lagi",
+        data: null,
       })
-  }
+    }
   }
 
   static async addSoal(req, res) {

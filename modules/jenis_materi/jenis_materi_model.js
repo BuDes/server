@@ -1,4 +1,4 @@
-const { STRING, UUIDV4, ENUM } = require("sequelize")
+const { STRING, UUIDV4, INTEGER } = require("sequelize")
 const sequelize = require("../../config/database")
 
 const JenisMateriModel = sequelize.define("jenis_materi", {
@@ -18,6 +18,10 @@ const JenisMateriModel = sequelize.define("jenis_materi", {
   },
   deskripsi: {
     type: STRING,
+    allowNull: false,
+  },
+  jlhSoal: {
+    type: INTEGER,
     allowNull: false,
   },
 }, {

@@ -32,7 +32,10 @@ class MateriController{
       const { id: idJenisMateri } = req.params
       
       const url = getUrl(req)
-      let materi = await MateriModel.findAll({ where: { idJenisMateri } })
+      let materi = await MateriModel.findAll({
+        where: { idJenisMateri },
+        order: [["nama", "ASC"]]
+      })
       materi = materi.map((e) => e.get())
       materi = MateriService.parseMateriVideo(materi, url)
       return res.status(200).json({
@@ -172,12 +175,15 @@ static async removeMateri(req, res) {
   static async materiAndJenis(req, res) {
     try {
       const url = getUrl(req)
-      let jenis = await JenisMateriModel.findAll()
+      let jenis = await JenisMateriModel.findAll({
+        order: [["nama", "ASC"]]
+      })
       jenis = jenis.map((e) => e.get())
       jenis = MateriService.parseJenisImage(jenis, url)
       
       let materi = await MateriModel.findAll({
-        include: ["jenis_materi"]
+        include: ["jenis_materi"],
+        order: [["nama", "ASC"]]
       })
       materi = materi.map((e) => e.get())
       materi = MateriService.parseJenisMateri(materi)
