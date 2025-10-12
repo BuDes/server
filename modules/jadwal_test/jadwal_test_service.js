@@ -13,6 +13,38 @@ class JadwalTestService {
     return upcoming
   }
 
+  static async getUserUpcomingTests(idUser) {
+    const now = new Date()
+    const upcoming = await JadwalTestModel.findAll({
+      where: {
+        tanggal: { [Op.gte]: now },
+      },
+      include: [{
+        association: "peserta",
+        where: { idUser },
+        attributes: []
+      }],
+      order: [["tanggal", "ASC"]],
+    })
+    return upcoming
+  }
+
+  static async getUserUnregisteredTests(idUser) {
+    const now = new Date()
+    const upcoming = await JadwalTestModel.findAll({
+      where: {
+        tanggal: { [Op.gte]: now },
+      },
+      include: ["peserta"]
+    })
+    const unregistered = upcoming.filter((e) => {
+      return e.peserta.every((peserta) => {
+        return peserta.idUser !== idUser
+      })
+    })
+    return unregistered
+  }
+
   static getPastTest = async () => {
     const now = new Date()
     let pastTest = await JadwalTestModel.findAll({

@@ -1,4 +1,5 @@
 const log = require("../../utils/log")
+const PesertaModel = require("../peserta/peserta_model")
 const RiwayatModel = require("../riwayat/riwayat_model")
 const UserModel = require("../user/user_model")
 const JadwalTestModel = require("./jadwal_test_model")
@@ -25,27 +26,39 @@ class JadwalTestController{
 
   static async jadwalByUser(req, res) {
     try {
-    const { idUser: id } = req
-    
-    const userWithJadwal = await UserModel.findByPk(id, {
-    include: [
-        {model: RiwayatModel, as:"riwayat", attributes: ["idJadwalTest"],
-        include: ["jadwal_test"]}
-    ]
-    })
-    
-    return res.status(200).json({
-    status: true,
-    message: "Berhasil mengambil detail jadwal test",
-    data: userWithJadwal,
-    })
+      const { idUser } = req
+      const registeredUpcoming = await JadwalTestService.getUserUpcomingTests(idUser)
+      return res.status(200).json({
+        status: true,
+        message: "Berhasil mengambil jadwal test",
+        data: registeredUpcoming,
+      })
     } catch (error) {
-    log.error(error.message)
-    return res.status(500).json({
-    status: false,
-    message: "Terjadi kesalahan, silahkan coba lagi",
-    data: null,
-    })
+      log.error(error)
+      return res.status(500).json({
+        status: false,
+        message: "Terjadi kesalahan, silahkan coba lagi",
+        data: null,
+      })
+    }
+  }
+
+  static async upcomingJadwalByUser(req, res) {
+    try {
+      const { idUser } = req
+      const unregisteredUpcoming = await JadwalTestService.getUserUnregisteredTests(idUser)
+      return res.status(200).json({
+        status: true,
+        message: "Berhasil mengambil jadwal test",
+        data: unregisteredUpcoming,
+      })
+    } catch (error) {
+      log.error(error)
+      return res.status(500).json({
+        status: false,
+        message: "Terjadi kesalahan, silahkan coba lagi",
+        data: null,
+      })
     }
   }
 
@@ -163,6 +176,30 @@ class JadwalTestController{
         status: true,
         message: "Berhasil mengambil detail jadwal test",
         data: jadwal,
+      })
+    } catch (error) {
+      log.error(error.message)
+      return res.status(500).json({
+        status: false,
+        message: "Terjadi kesalahan, silahkan coba lagi",
+        data: null,
+      })
+    }
+  }
+
+  static async daftarTest(req, res) {
+    try {
+      const { idUser } = req
+      const { idJadwal } = req.params
+      const data = {
+        idUser,
+        idJadwalTest: idJadwal
+      }
+      const peserta = await PesertaModel.create(data)
+      return res.status(201).json({
+        status: true,
+        message: "Berhasil mendaftarkan test",
+        data: peserta,
       })
     } catch (error) {
       log.error(error.message)
