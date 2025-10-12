@@ -90,7 +90,8 @@ function defineAssociations() {
 
   JawabanModel.belongsTo(OpsiModel, {
     foreignKey: "idOpsi",
-    as: "opsi"
+    as: "opsi",
+    onDelete: "CASCADE"
   })
 
   JawabanModel.belongsTo(RiwayatModel, {
@@ -99,6 +100,14 @@ function defineAssociations() {
   })
   RiwayatModel.hasMany(JawabanModel, {
     foreignKey: "idRiwayat",
+    as: "jawaban"
+  })
+  JawabanModel.belongsTo(SoalModel, {
+    foreignKey: "idSoal",
+    as: "soal"
+  })
+  SoalModel.hasMany(JawabanModel, {
+    foreignKey: "idSoal",
     as: "jawaban"
   })
   

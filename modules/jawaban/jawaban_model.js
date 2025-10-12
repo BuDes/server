@@ -10,7 +10,11 @@ const JawabanModel = sequelize.define("jawaban", {
   },
   idOpsi:{
     type: STRING,
-    allowNull: false,
+    allowNull: true,
+  },
+  idSoal:{
+    type: STRING,
+    allowNull: true,
   },
   idRiwayat:{
     type: STRING,

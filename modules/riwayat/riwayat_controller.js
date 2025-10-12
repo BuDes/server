@@ -141,7 +141,7 @@ class RiwayatController{
         data: parsedJawaban,
       })
     } catch (error) {
-      log.error(error.message)
+      log.error(error)
       return res.status(500).json({
         status: false,
         message: "Terjadi kesalahan, silahkan coba lagi",

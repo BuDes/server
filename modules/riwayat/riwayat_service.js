@@ -7,13 +7,19 @@ class RiwayatService {
       where: { idUser },
       include: [{
         association: "jawaban",
-        include: [{
-          association: "opsi",
-          include: [{
+        include: [
+          {
+            association: "opsi",
+            include: [{
+              association: "soal",
+              include: ["opsi"]
+            }]
+          },
+          {
             association: "soal",
             include: ["opsi"]
-          }]
-        }]
+          },
+        ]
       }]
     })
     return riwayat.jawaban
@@ -24,13 +30,19 @@ class RiwayatService {
       where: { idUser, idJadwal },
       include: [{
         association: "jawaban",
-        include: [{
-          association: "opsi",
-          include: [{
+        include: [
+          {
+            association: "opsi",
+            include: [{
+              association: "soal",
+              include: ["opsi"]
+            }]
+          },
+          {
             association: "soal",
             include: ["opsi"]
-          }]
-        }]
+          },
+        ]
       }]
     })
     return riwayat.jawaban
@@ -38,8 +50,11 @@ class RiwayatService {
 
   static parseHasilJawaban(listJawaban) {
     return listJawaban.map((jawaban) => {
-      const { soal } = jawaban.opsi.get()
-      return { ...jawaban.get(), ...soal.get() }
+      jawaban = jawaban.get()
+      const opsi = jawaban.opsi?.get()
+      const soal = opsi ? opsi.soal : jawaban.soal
+      delete jawaban.soal
+      return { ...jawaban, ...soal.get() }
     })
   }
 }
