@@ -8,6 +8,7 @@ const SoalModel = require('../soal&opsi/soal_model')
 const OpsiModel = require('../soal&opsi/opsi_model')
 const JawabanModel = require('../jawaban/jawaban_model')
 const AttachmentModel = require('../attachment/attachment_model')
+const MessageModel = require('../message/message_model')
 
 function defineAssociations() {
   MateriModel.belongsTo(JenisMateriModel, { 
@@ -108,6 +109,23 @@ function defineAssociations() {
   AttachmentModel.hasMany(SoalModel, {
     foreignKey: "idAttachment",
     as: "soal"
+  })
+  
+  MessageModel.belongsTo(UserModel, {
+    foreignKey: "fromUserId",
+    as: "fromUser"
+  })
+  UserModel.hasMany(MessageModel, {
+    foreignKey: "fromUserId",
+    as: "sentMessages"
+  })
+  MessageModel.belongsTo(UserModel, {
+    foreignKey: "toUserId",
+    as: "toUser"
+  })
+  UserModel.hasMany(MessageModel, {
+    foreignKey: "toUserId",
+    as: "receivedMessages"
   })
 
 }

@@ -1,4 +1,4 @@
-const { STRING, UUIDV4, ENUM } = require("sequelize")
+const { STRING, UUIDV4, TEXT } = require("sequelize")
 const sequelize = require("../../config/database")
 const bcrypt = require("bcrypt")
 const saltRounds = parseInt(process.env.SALTROUNDS)
@@ -19,7 +19,7 @@ const MessageModel = sequelize.define("message", {
     allowNull: false,
   },
   content: {
-    type: STRING,
+    type: TEXT,
     allowNull: false,
   },
 }, {
