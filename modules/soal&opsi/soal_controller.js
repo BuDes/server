@@ -78,7 +78,25 @@ class SoalController {
 
   static async practiceTest(req, res) {
     try {
-      const randomSoal = await SoalService.getRandomSoal()
+      const randomSoal = await SoalService.getRandomSoal("practice")
+      return res.status(200).json({
+        status: true,
+        message: "Berhasil mengambil soal",
+        data: randomSoal,
+      })
+    } catch (error) {
+      log.error(error)
+      return res.status(500).json({
+        status: false,
+        message: "Terjadi kesalahan, silahkan coba lagi",
+        data: null,
+      })
+    }
+  }
+
+  static async realTest(req, res) {
+    try {
+      const randomSoal = await SoalService.getRandomSoal("test")
       return res.status(200).json({
         status: true,
         message: "Berhasil mengambil soal",

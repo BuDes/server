@@ -3,14 +3,17 @@ const JenisMateriModel = require("../jenis_materi/jenis_materi_model")
 const SoalModel = require("./soal_model")
 
 class SoalService {
-  static async getRandomSoal() {
+  static async getRandomSoal(tipe) {
     const listJenis = await JenisMateriModel.findAll({ raw: true })
     const promises = listJenis.map(async (jenis) => {
       const limit = jenis.jlhSoal
 
       const randomIds = await SoalModel.findAll({
         attributes: ["id"],
-        where: { idJenisMateri: jenis.id },
+        where: {
+          idJenisMateri: jenis.id,
+          tipe,
+        },
         order: sequelize.random(),
         limit,
       })

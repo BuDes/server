@@ -4,7 +4,7 @@ const authentication = require("../../middlewares/authentication");
 const router = express.Router();
 
 router.get("/", authentication, JadwalTestController.jadwalByUser)
-router.get("/unregistered", authentication, JadwalTestController.upcomingJadwalByUser)
+// router.get("/unregistered", authentication, JadwalTestController.upcomingJadwalByUser)
 // TODO: auth admin
 router.get("/all", JadwalTestController.allJadwalTest)
 router.get("/all_sorted", JadwalTestController.sortedJadwal)

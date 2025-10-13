@@ -1,5 +1,6 @@
 const { Op } = require("sequelize")
 const JadwalTestModel = require("./jadwal_test_model")
+const RiwayatModel = require("../riwayat/riwayat_model")
 
 class JadwalTestService {
   static getUpcomingTest = async () => {
@@ -15,9 +16,18 @@ class JadwalTestService {
 
   static async getUserUpcomingTests(idUser) {
     const now = new Date()
+    const riwayat = await RiwayatModel.findAll({
+      attributes: ["idJadwalTest"],
+      where: {
+        idUser,
+        idJadwalTest: { [Op.not]: null }
+      }
+    })
+    const riwayatIds = riwayat.map((e) => e.idJadwalTest)
     const upcoming = await JadwalTestModel.findAll({
       where: {
         tanggal: { [Op.gte]: now },
+        id: { [Op.not]: riwayatIds }
       },
       include: [{
         association: "peserta",

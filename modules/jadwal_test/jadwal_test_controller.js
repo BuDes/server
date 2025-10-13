@@ -27,11 +27,12 @@ class JadwalTestController{
   static async jadwalByUser(req, res) {
     try {
       const { idUser } = req
-      const registeredUpcoming = await JadwalTestService.getUserUpcomingTests(idUser)
+      const registered = await JadwalTestService.getUserUpcomingTests(idUser)
+      const unregistered = await JadwalTestService.getUserUnregisteredTests(idUser)
       return res.status(200).json({
         status: true,
         message: "Berhasil mengambil jadwal test",
-        data: registeredUpcoming,
+        data: { registered, unregistered },
       })
     } catch (error) {
       log.error(error)
@@ -43,24 +44,24 @@ class JadwalTestController{
     }
   }
 
-  static async upcomingJadwalByUser(req, res) {
-    try {
-      const { idUser } = req
-      const unregisteredUpcoming = await JadwalTestService.getUserUnregisteredTests(idUser)
-      return res.status(200).json({
-        status: true,
-        message: "Berhasil mengambil jadwal test",
-        data: unregisteredUpcoming,
-      })
-    } catch (error) {
-      log.error(error)
-      return res.status(500).json({
-        status: false,
-        message: "Terjadi kesalahan, silahkan coba lagi",
-        data: null,
-      })
-    }
-  }
+  // static async upcomingJadwalByUser(req, res) {
+  //   try {
+  //     const { idUser } = req
+  //     const unregisteredUpcoming = await JadwalTestService.getUserUnregisteredTests(idUser)
+  //     return res.status(200).json({
+  //       status: true,
+  //       message: "Berhasil mengambil jadwal test",
+  //       data: unregisteredUpcoming,
+  //     })
+  //   } catch (error) {
+  //     log.error(error)
+  //     return res.status(500).json({
+  //       status: false,
+  //       message: "Terjadi kesalahan, silahkan coba lagi",
+  //       data: null,
+  //     })
+  //   }
+  // }
 
   static async addJadwalTest(req, res) {
     try {
