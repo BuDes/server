@@ -6,6 +6,7 @@ const router = express.Router();
 router.post("/register", UserController.register)
 router.post("/login", UserController.login)
 router.get("/profile", authentication, UserController.profile)
+router.get("/pakar", UserController.getAllPakar)
 router.put("/profile", authentication, UserController.updateProfile)
 router.delete("/logout", authentication, UserController.logout)
 router.put("/update_password", authentication, UserController.updatePassword)

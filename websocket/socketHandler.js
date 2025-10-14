@@ -32,18 +32,14 @@ module.exports = (io) => {
 
       console.log(content, socket.userId, to_user_id);
      
-      const message = await MessageModel.create({
+      let message = await MessageModel.create({
         content,
         fromUserId: socket.userId,
         toUserId: to_user_id,
       })
-      // const message = await prisma.message.create({
-      //   data: {
-      //     content,
-      //     fromUserId: socket.userId,
-      //     toUserId: Number(to_user_id),
-      //   },
-      // });
+      message = await MessageModel.findByPk(message.id, {
+        include: ["fromUser"]
+      })
 
       // Kirim ke penerima
       const toSocketId = users[`${to_user_id}`]?.socketId;
@@ -52,9 +48,7 @@ module.exports = (io) => {
       if (toSocketId) {
         console.log("tes dalem")
         io.to(toSocketId).emit("receive_message", message);
-        // TODO: delete message
         await MessageModel.destroy({ where: { id: message.id } })
-        // await prisma.message.delete({ where: { id: message.id } })
       }
       callback({ status: true, id: message.id })
     });

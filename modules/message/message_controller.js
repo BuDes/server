@@ -8,7 +8,8 @@ class MessageController {
       
       // get received messages
       const messages = await MessageModel.findAll({
-        where: { toUserId: idUser }
+        where: { toUserId: idUser },
+        include: ["fromUser"],
       })
       
       // delete received messages from server db

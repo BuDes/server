@@ -1,7 +1,5 @@
 const { STRING, UUIDV4, TEXT } = require("sequelize")
 const sequelize = require("../../config/database")
-const bcrypt = require("bcrypt")
-const saltRounds = parseInt(process.env.SALTROUNDS)
 
 const MessageModel = sequelize.define("message", {
   id: {
@@ -24,11 +22,6 @@ const MessageModel = sequelize.define("message", {
   },
 }, {
   freezeTableName: true,
-  hooks: {
-    beforeCreate(user) {
-      user.password = bcrypt.hashSync(user.password, saltRounds)
-    }
-  }
 })
 
 module.exports = MessageModel

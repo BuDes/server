@@ -234,6 +234,27 @@ class UserController {
       })
     }
   }
+
+  static async getAllPakar(req, res) {
+    try {
+      const pakar = await UserModel.findAll({
+        where: { role: "pakar" }
+      })
+      return res.status(200).json({
+        status: true,
+        message: "Berhasil mengambil pakar",
+        data: pakar,
+      })
+    } catch (error) {
+      log.error(error.message)
+      return res.status(500).json({
+        status: false,
+        message: "Terjadi kesalahan, silahkan coba lagi",
+        data: null,
+      })
+    }
+  }
+  
 }
 
 module.exports = UserController
