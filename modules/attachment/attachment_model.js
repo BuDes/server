@@ -1,4 +1,4 @@
-const { STRING, UUIDV4 } = require("sequelize")
+const { STRING, UUIDV4, TEXT } = require("sequelize")
 const sequelize = require("../../config/database")
 
 const AttachmentModel = sequelize.define("attachment", {
@@ -9,7 +9,7 @@ const AttachmentModel = sequelize.define("attachment", {
     primaryKey: true,
   },
   passage: {
-    type: STRING,
+    type: TEXT,
     allowNull: true,
   },
   audioFile: {

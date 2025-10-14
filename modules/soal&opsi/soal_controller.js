@@ -78,7 +78,9 @@ class SoalController {
 
   static async practiceTest(req, res) {
     try {
-      const randomSoal = await SoalService.getRandomSoal("practice")
+      const url = getUrl(req)
+      let randomSoal = await SoalService.getRandomSoal("practice")
+      randomSoal = SoalService.parseAudio(randomSoal, url)
       return res.status(200).json({
         status: true,
         message: "Berhasil mengambil soal",
@@ -96,7 +98,9 @@ class SoalController {
 
   static async realTest(req, res) {
     try {
-      const randomSoal = await SoalService.getRandomSoal("test")
+      const url = getUrl(req)
+      let randomSoal = await SoalService.getRandomSoal("test")
+      randomSoal = SoalService.parseAudio(randomSoal, url)
       return res.status(200).json({
         status: true,
         message: "Berhasil mengambil soal",

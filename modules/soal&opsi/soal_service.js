@@ -20,7 +20,7 @@ class SoalService {
       const ids = randomIds.map((e) => e.id)
       const randomSoal = await SoalModel.findAll({
         where: { id: ids },
-        include: ["opsi"]
+        include: ["opsi", "attachment"]
       })
       const soal = randomSoal.map((e) => e.get())
 
@@ -28,6 +28,18 @@ class SoalService {
     })
 
     return await Promise.all(promises)
+  }
+
+  static parseAudio(listJenis, url) {
+    return listJenis.map((jenis) => {
+      const listSoal = jenis.soal.map((soal) => {
+        if (!soal.attachment?.audioFile) return soal
+        const audioFile = `${url}/public/audioFile/${soal.attachment.audioFile}`
+        const attachment = { ...soal.attachment.get(), audioFile }
+        return { ...soal, attachment }
+      })
+      return { ...jenis, soal: listSoal }
+    })
   }
 }
 
