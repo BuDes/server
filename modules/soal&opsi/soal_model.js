@@ -25,6 +25,10 @@ const SoalModel = sequelize.define("soal", {
     type: TEXT,
     allowNull: false,
   },
+  pembahasan: {
+    type: TEXT,
+    allowNull: false,
+  },
   tipe: {
     type: ENUM("test", "practice"),
     allowNull: false,
