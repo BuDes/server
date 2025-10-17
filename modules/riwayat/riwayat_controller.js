@@ -31,7 +31,8 @@ class RiwayatController{
   static async addRiwayat(req, res) {
     try {
         const data = req.body
-        const riwayat = await RiwayatModel.create(data)
+        const { idUser } = req
+        const riwayat = await RiwayatModel.create({ ...data, idUser })
         return res.status(201).json({
         status: true,
         message: "Berhasil menambahkan jadwal test",

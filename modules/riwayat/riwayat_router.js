@@ -8,7 +8,7 @@ router.get("/", authentication, RiwayatController.myRiwayat)
 router.get("/hasil_practice_test", authentication, RiwayatController.hasilPracticeTest)
 router.get("/jadwal_test/:idJadwal", authentication, RiwayatController.hasilTest)
 router.post("/submit_jawaban", authentication, RiwayatController.submitAnswers)
-router.post("/add", RiwayatController.addRiwayat)
+router.post("/add", authentication, RiwayatController.addRiwayat)
 router.put("/edit/:id", RiwayatController.updateriwayat)
 router.delete("/remove/:id", RiwayatController.removeriwayat)
 
