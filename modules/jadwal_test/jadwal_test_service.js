@@ -1,10 +1,12 @@
 const { Op } = require("sequelize")
 const JadwalTestModel = require("./jadwal_test_model")
 const RiwayatModel = require("../riwayat/riwayat_model")
+const { toleransiTest } = require("../../utils/constants")
 
 class JadwalTestService {
   static getUpcomingTest = async () => {
     const now = new Date()
+    now.setMinutes(now.getMinutes() - toleransiTest)
     let upcoming = await JadwalTestModel.findAll({
       where: { tanggal: { [Op.gte]: now } },
       order: [["tanggal", "ASC"]],
@@ -16,6 +18,7 @@ class JadwalTestService {
 
   static async getUserUpcomingTests(idUser) {
     const now = new Date()
+    now.setMinutes(now.getMinutes() - toleransiTest)
     const riwayat = await RiwayatModel.findAll({
       attributes: ["idJadwalTest"],
       where: {
@@ -41,6 +44,7 @@ class JadwalTestService {
 
   static async getUserUnregisteredTests(idUser) {
     const now = new Date()
+    now.setMinutes(now.getMinutes() - toleransiTest)
     const upcoming = await JadwalTestModel.findAll({
       where: {
         tanggal: { [Op.gte]: now },
@@ -57,6 +61,7 @@ class JadwalTestService {
 
   static getPastTest = async () => {
     const now = new Date()
+    now.setMinutes(now.getMinutes() - toleransiTest)
     let pastTest = await JadwalTestModel.findAll({
       where: { tanggal: { [Op.lt]: now } },
       order: [["tanggal", "DESC"]],
@@ -75,6 +80,7 @@ class JadwalTestService {
 
   static parseStatus(jadwal) {
     const now = new Date()
+    now.setMinutes(now.getMinutes() - toleransiTest)
     const tanggal = new Date(jadwal.tanggal)
     const status = tanggal >= now ? "Terjadwal" : "Selesai"
     return { ...jadwal.get(), status }

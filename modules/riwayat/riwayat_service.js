@@ -4,7 +4,7 @@ class RiwayatService {
   static async getLatestJawaban(idUser) {
     const riwayat = await RiwayatModel.findOne({
       order: [["createdAt", "DESC"]],
-      where: { idUser },
+      where: { idUser, idJadwalTest: null },
       include: [{
         association: "jawaban",
         include: [
@@ -25,9 +25,9 @@ class RiwayatService {
     return riwayat.jawaban
   }
 
-  static async getJawabanTest(idJadwal, idUser) {
+  static async getJawabanTest(idJadwalTest, idUser) {
     const riwayat = await RiwayatModel.findOne({
-      where: { idUser, idJadwal },
+      where: { idUser, idJadwalTest },
       include: [{
         association: "jawaban",
         include: [

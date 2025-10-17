@@ -1,0 +1,1 @@
+export const toleransiTest = 30 // minutes
