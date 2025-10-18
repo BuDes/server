@@ -7,6 +7,7 @@ const JadwalTestModel = require("../jadwal_test/jadwal_test_model")
 const OpsiModel = require("./opsi_model")
 const JenisMateriModel = require("../jenis_materi/jenis_materi_model")
 const SoalService = require("./soal_service")
+const AttachmentModel = require("../attachment/attachment_model")
 
 class SoalController {
   static async allSoal(req, res) {
@@ -348,30 +349,30 @@ static async updateSoal(req, res) {
       });
     }
 
-    let audioFile = soal.audioFile;
-    if (req.files && req.files.file) {
-      const file = req.files.file;
-      const fileSize = file.data.length;
-      const ext = path.extname(file.name);
-      const fileName = file.md5 + ext;
-      const url = getUrl(req)
-      audioFile = `${url}/public/audioFile/${fileName}`;
-      const allowedType = ['.aac', '.mp3', '.wav'];
+    // let audioFile = soal.audioFile;
+    // if (req.files && req.files.file) {
+    //   const file = req.files.file;
+    //   const fileSize = file.data.length;
+    //   const ext = path.extname(file.name);
+    //   const fileName = file.md5 + ext;
+    //   const url = getUrl(req)
+    //   audioFile = `${url}/public/audioFile/${fileName}`;
+    //   const allowedType = ['.aac', '.mp3', '.wav'];
 
-      if (!allowedType.includes(ext.toLowerCase())) {
-        return res.status(422).json({ message: "Invalid file" });
-      }
-        if (fileSize > 100 * 1024 * 1024) return res.status(422).json({ message: "Audio must be less than 100 MB" })
-      if (soal.audioFile) {
-      const oldFile = `./public/audioFile/${soal.audioFile.split("/").pop()}`;
-      if (fs.existsSync(oldFile)) fs.unlinkSync(oldFile);
-      }
+    //   if (!allowedType.includes(ext.toLowerCase())) {
+    //     return res.status(422).json({ message: "Invalid file" });
+    //   }
+    //     if (fileSize > 100 * 1024 * 1024) return res.status(422).json({ message: "Audio must be less than 100 MB" })
+    //   if (soal.audioFile) {
+    //   const oldFile = `./public/audioFile/${soal.audioFile.split("/").pop()}`;
+    //   if (fs.existsSync(oldFile)) fs.unlinkSync(oldFile);
+    //   }
 
-      await file.mv(`./public/audioFile/${fileName}`);
-    }
+    //   await file.mv(`./public/audioFile/${fileName}`);
+    // }
     await soal.update({
       ...data,
-      audioFile: audioFile
+      // audioFile: audioFile
     });
     const opsiKeys = Object.keys(data).filter(k => k.startsWith("opsi["));
     let opsiSaved = []
@@ -470,10 +471,11 @@ static async removeSoal(req, res) {
       const soal = await SoalModel.findByPk(id, {
         include: ["opsi"]
       })
+      const attachments = await AttachmentModel.findAll()
       return res.status(200).json({
         status: true,
         message: "Berhasil mengambil detail soal",
-        data: soal,
+        data: { soal, attachments },
       })
     } catch (error) {
       log.error(error.message);

@@ -8,6 +8,10 @@ const AttachmentModel = sequelize.define("attachment", {
     allowNull: false,
     primaryKey: true,
   },
+  nama: {
+    type: STRING,
+    allowNull: false,
+  },
   passage: {
     type: TEXT,
     allowNull: true,

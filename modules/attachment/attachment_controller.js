@@ -21,6 +21,25 @@ class AttachmentController {
     }
   }
 
+  static async singleAttachment(req, res) {
+    try {
+      const { id } = req.params
+      const attachment = await AttachmentModel.findByPk(id)
+      return res.status(200).json({
+        status: true,
+        message: "Berhasil mengambil data attachment",
+        data: attachment,
+      })
+    } catch (error) {
+      log.error(error.message)
+      return res.status(500).json({
+        status: false,
+        message: "Terjadi kesalahan, silahkan coba lagi",
+        data: null,
+      })
+    }
+  }
+
   static async addAttachment(req, res) {
     try {
       const data = req.body ?? {}
